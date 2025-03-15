@@ -28,7 +28,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
     useEffect(() => {
       const fetchMapData = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/config');
+          const response = await fetch('http://localhost:5050/api/config');
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
@@ -46,7 +46,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
     }, []);
 
     useEffect(() => {
-      fetch('http://localhost:5000/api/schedules')
+      fetch('http://localhost:5050/api/schedules')
           .then(response => response.json())
           .then(data => setScheduleData(data.data))
           .catch(error => console.error('Error fetching schedules:', error));
@@ -62,7 +62,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
         const year = dateObj.getFullYear();
         const formattedDate = `${day}-${month}-${year}`;
     
-        fetch(`http://localhost:5000/api/schedules?date=${formattedDate}`)
+        fetch(`http://localhost:5050/api/schedules?date=${formattedDate}`)
           .then(response => response.json())
           .then(data => {
             // data.data contains the rows from Schedule_Table
@@ -73,7 +73,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
     }, [selectedDate]);
 
     useEffect(()=>{
-      fetch('http://localhost:5000/api/schedules')
+      fetch('http://localhost:5050/api/schedules')
       .then(response => response.json())
       .then(data => setScheduleData(data.data))
       .catch(error => console.error('Error fetching schedules:', error));
@@ -86,7 +86,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
         const year = dateObj.getFullYear();
         const formattedDate = `${day}-${month}-${year}`;
     
-        fetch(`http://localhost:5000/api/schedules?date=${formattedDate}`)
+        fetch(`http://localhost:5050/api/schedules?date=${formattedDate}`)
           .then(response => response.json())
           .then(data => {
             // data.data contains the rows from Schedule_Table
@@ -201,7 +201,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
     const handleNewZoneClick = async () => {
       try {
         // Force re-fetching config data to avoid stale cache issues
-        const response = await fetch(`http://localhost:5000/api/config?timestamp=${new Date().getTime()}`);
+        const response = await fetch(`http://localhost:5050/api/config?timestamp=${new Date().getTime()}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -255,7 +255,7 @@ const Schedules = ({showPage, showCreateSchedulePage}) => {
 
       for (let schedule of scheduleToDelete) {
         try {
-          const response = await fetch('http://localhost:5000/api/delete_schedule', {
+          const response = await fetch('http://localhost:5050/api/delete_schedule', {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',

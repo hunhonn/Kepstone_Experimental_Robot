@@ -59,7 +59,7 @@ const CreateMapPage = ({ mapName, showPage }) => {
   // Function to fetch config data from sqlite db
   const fetchConfigData = async () => {
     try {
-        const response = await fetch('http://localhost:5000/api/config');
+        const response = await fetch('http://localhost:5050/api/config');
       
         if (!response.ok) {
           throw new Error('Network response error');
@@ -78,7 +78,7 @@ const CreateMapPage = ({ mapName, showPage }) => {
 
   const fetchPolyData = async () => {
     try {
-        const response = await fetch('http://localhost:5000/api/bcdpolycontourdata');
+        const response = await fetch('http://localhost:5050/api/bcdpolycontourdata');
       
         if (!response.ok) {
           throw new Error('Network response error');
@@ -457,7 +457,7 @@ const CreateMapPage = ({ mapName, showPage }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/maps/${encodeURIComponent(mapName)}`, {
+      const response = await fetch(`http://localhost:5050/api/maps/${encodeURIComponent(mapName)}`, {
         method: 'DELETE',
       });
 
@@ -497,7 +497,7 @@ const CreateMapPage = ({ mapName, showPage }) => {
   const handleEdit = async () => {
     // console.log('Edit button clicked');
     try {
-      const response = await fetch(`http://localhost:5000/api/maps/${encodeURIComponent(mapName)}`, {
+      const response = await fetch(`http://localhost:5050/api/maps/${encodeURIComponent(mapName)}`, {
         method: 'DELETE',
       });
 

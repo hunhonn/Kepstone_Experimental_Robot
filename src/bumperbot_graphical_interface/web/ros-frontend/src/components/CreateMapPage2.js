@@ -41,7 +41,7 @@ const CreateMapPage2 = ({showPage}) => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/config');
+          const response = await fetch('http://localhost:5050/api/config');
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
@@ -61,7 +61,7 @@ const CreateMapPage2 = ({showPage}) => {
   const handleNewZoneClick = async () => {
     try {
       // Force re-fetching config data to avoid stale cache issues
-      const response = await fetch(`http://localhost:5000/api/config?timestamp=${new Date().getTime()}`);
+      const response = await fetch(`http://localhost:5050/api/config?timestamp=${new Date().getTime()}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -111,7 +111,7 @@ const CreateMapPage2 = ({showPage}) => {
 
     for (let zone of zonesToDelete) {
       try {
-        const response = await fetch(`http://localhost:5000/api/maps/${encodeURIComponent(zone)}`, {
+        const response = await fetch(`http://localhost:5050/api/maps/${encodeURIComponent(zone)}`, {
           method: 'DELETE',
         });
   

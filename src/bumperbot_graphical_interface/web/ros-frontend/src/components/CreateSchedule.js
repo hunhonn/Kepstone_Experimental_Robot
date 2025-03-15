@@ -105,7 +105,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
               const scheduleId = getUUID(); // Generate a unique schedule_id
   
               // Insert schedule into Schedule_Table
-              return fetch('http://localhost:5000/api/schedule', {
+              return fetch('http://localhost:5050/api/schedule', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json'
@@ -133,7 +133,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
                       
   
                       // Insert job into Jobs_Table
-                      return fetch('http://localhost:5000/api/jobs', {
+                      return fetch('http://localhost:5050/api/jobs', {
                           method: 'POST',
                           headers: {
                               'Content-Type': 'application/json'
@@ -146,7 +146,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
                       })
                       .then(() => {
                           // Insert job order into Job_Order_Table
-                          return fetch('http://localhost:5000/api/job_order', {
+                          return fetch('http://localhost:5050/api/job_order', {
                               method: 'POST',
                               headers: {
                                   'Content-Type': 'application/json'
@@ -159,7 +159,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
                       })
                       .then(() => {
                           // Insert schedule-job link into Schedule_Job_Link
-                          return fetch('http://localhost:5000/api/schedule_job_link', {
+                          return fetch('http://localhost:5050/api/schedule_job_link', {
                               method: 'POST',
                               headers: {
                                   'Content-Type': 'application/json'
@@ -173,7 +173,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
                       })
                       .then(() => {
                           // Insert into ContainsTable
-                          return fetch('http://localhost:5000/api/contains', {
+                          return fetch('http://localhost:5050/api/contains', {
                               method: 'POST',
                               headers: {
                                   'Content-Type': 'application/json'
@@ -189,7 +189,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
                   return Promise.all(jobPromises)
                       .then(() => {
                         // Insert job status into JobStatus
-                        return fetch('http://localhost:5000/api/job_status', {
+                        return fetch('http://localhost:5050/api/job_status', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -218,7 +218,7 @@ const CreateSchedule = ({showPage, selectedDate}) => {
 
     const fetchConfigIds = async (zoneSequence) => {
       try {
-          const response = await fetch('http://localhost:5000/api/config_ids', {
+          const response = await fetch('http://localhost:5050/api/config_ids', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

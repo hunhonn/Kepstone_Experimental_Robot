@@ -24,5 +24,9 @@
         <param name="waypoints_file_path" value="$(arg waypoints_file)" />
     </node>
 
+    <node name="config_provider" pkg="bumperbot_graphical_interface" type="rosparam_server.py" output="screen">
+        <param name="config_path" value="$(find config_manager)/config/parameters.yaml" />
+    </node>
+
     <!--<include file="$(find coverage_planner)/launch/coverage_planner.launch"></include>-->
 </launch>

@@ -441,7 +441,7 @@ export function sidebrush_position_listener() {
   return listener;
 }
 
-export function realsense_d455_listener_front() {
+export async function realsense_d455_listener_front() {
   // Initialize ROS connection
   var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
@@ -457,9 +457,29 @@ export function realsense_d455_listener_front() {
     console.log('realsense_d455_listener is disconnected from ROSBridge');
   });
 
+  async function fetchParam(paramName) {
+    return new Promise((resolve, reject) => {
+      const paramService = new ROSLIB.Service({
+        ros: ros,
+        name: '/get_param',
+        serviceType: 'bumperbot_graphical_interface/GetParam'
+      });
+      const request = new ROSLIB.ServiceRequest({ param_name: paramName });
+      paramService.callService(request, (result) => {
+        if (result.value) {
+          resolve(result.value);
+        } else {
+          reject('Failed to get param');
+        }
+      });
+    });
+  }
+
+  const topicName = await fetchParam('camera/topics/color_image_front_compressed');
+  // console.log("topicName",topicName);
   const listener = new ROSLIB.Topic({
     ros: ros,
-    name: '/depth_camera_front/color/image_raw/compressed', 
+    name: topicName,
     messageType: 'sensor_msgs/CompressedImage'
   });
 
@@ -480,7 +500,7 @@ export function realsense_d455_listener_front() {
   return listener;
 }
 
-export function realsense_d455_listener_rear() {
+export async function realsense_d455_listener_rear() {
   // Initialize ROS connection
   var ros = new ROSLIB.Ros({
     url: 'ws://localhost:9090'
@@ -496,9 +516,29 @@ export function realsense_d455_listener_rear() {
     console.log('realsense_d455_listener_rear is disconnected from ROSBridge');
   });
 
+  async function fetchParam(paramName) {
+    return new Promise((resolve, reject) => {
+      const paramService = new ROSLIB.Service({
+        ros: ros,
+        name: '/get_param',
+        serviceType: 'bumperbot_graphical_interface/GetParam'
+      });
+      const request = new ROSLIB.ServiceRequest({ param_name: paramName });
+      paramService.callService(request, (result) => {
+        if (result.value) {
+          resolve(result.value);
+        } else {
+          reject('Failed to get param');
+        }
+      });
+    });
+  }
+
+  const topicName = await fetchParam('camera/topics/color_image_rear_compressed');
+
   const listener = new ROSLIB.Topic({
     ros: ros,
-    name: '/depth_camera_rear/color/image_raw/compressed', //Fake name change for DV8
+    name: topicName, 
     messageType: 'sensor_msgs/CompressedImage'
   });
   // Throttling: allow messages only every ~17ms (60fps)

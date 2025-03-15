@@ -64,6 +64,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   WriteWaypoints.srv
+  GetParam.srv
 )
 
 ## Generate actions in the 'action' folder
@@ -164,6 +165,7 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/start_coverage_planner_service.py
   scripts/start_coverage_service.py
+  scripts/rosparam_server.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

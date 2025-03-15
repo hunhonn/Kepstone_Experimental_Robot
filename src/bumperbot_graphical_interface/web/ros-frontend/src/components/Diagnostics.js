@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Diagnostics.css';
 // import ROSLIB from 'roslib';
 import { sidebrush_speed_listener, sidebrush_position_listener, realsense_d455_listener_front, realsense_d455_listener_rear} from '../rosService';
+import maximizeIcon from '../assets/icons/maximize.svg';
+import minimizeIcon from '../assets/icons/minimize.svg';
 
 const Diagnostics = ({showPage}) => {
     const [data, setData] = useState([]);
@@ -15,6 +17,7 @@ const Diagnostics = ({showPage}) => {
     const [imageDataRear, setImageDataRear] = useState(null);
     const [imageFrontMessages, setImageFrontMessages] = useState([]);
     const [imageRearMessages, setImageRearMessages] = useState([]);
+    const [isFullscreen, setisFullscreen] = useState(false);
     const [enlargedImage, setEnlargedImage] = useState(imageDataFront);
     const [currentCameraMode,setCurrentCameraMode] = useState('front');
 
@@ -30,7 +33,7 @@ const Diagnostics = ({showPage}) => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/config');
+          const response = await fetch('http://localhost:5050/api/config');
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
@@ -73,49 +76,61 @@ const Diagnostics = ({showPage}) => {
     }, []);
 
     useEffect(() => {
-      const realsense_listener_srv = realsense_d455_listener_front();
+      const setupListener = async () => {
+        const realsense_listener_srv = await realsense_d455_listener_front();
+        
+        const handleNewImageMessage = (msg) => {
+          const labeledMessage = `/depth_camera_front/color/image_raw/compressed received: ${msg.header.stamp}`;
     
-      const handleNewImageMessage = (msg) => {
-        const labeledMessage = `/depth_camera_front/color/image_raw/compressed received: ${msg.header.stamp}`;
-  
-        // Adjust MIME type based on msg.format content
-        const mimeType = msg.format.includes('jpeg') ? 'image/jpeg' : msg.format;
-        const imageUrl = `data:${mimeType};base64,${msg.data}`;
+          // Adjust MIME type based on msg.format content
+          const mimeType = msg.format.includes('jpeg') ? 'image/jpeg' : msg.format;
+          const imageUrl = `data:${mimeType};base64,${msg.data}`;
     
-        setImageDataFront(imageUrl);
-        setImageFrontMessages(prevMessages => [...prevMessages, labeledMessage]);
+          setImageDataFront(imageUrl);
+          setImageFrontMessages(prevMessages => [...prevMessages, labeledMessage]);
+        };
+    
+        realsense_listener_srv.subscribe(handleNewImageMessage);
+    
+        return () => {
+          realsense_listener_srv.unsubscribe(handleNewImageMessage);
+        };
       };
     
-      realsense_listener_srv.subscribe(handleNewImageMessage);
-    
-      return () => {
-        realsense_listener_srv.unsubscribe(handleNewImageMessage);
-      };
+      setupListener();
     }, []);
 
     useEffect(() => {
-      const realsense_listener_rear_srv = realsense_d455_listener_rear();
+      const setupListener = async () => {
+        const realsense_listener_rear_srv = await realsense_d455_listener_rear();
+      
+        const handleNewImageMessage = (msg) => {
+          const labeledMessage = `/depth_camera_rear/color/image_raw/compressed received: ${msg.header.stamp}`;
     
-      const handleNewImageMessage = (msg) => {
-        const labeledMessage = `/depth_camera_rear/color/image_raw/compressed received: ${msg.header.stamp}`;
-  
-        // Adjust MIME type based on msg.format content
-        const mimeType = msg.format.includes('jpeg') ? 'image/jpeg' : msg.format;
-        const imageUrl = `data:${mimeType};base64,${msg.data}`;
-    
-        setImageDataRear(imageUrl);
-        setImageRearMessages(prevMessages => [...prevMessages, labeledMessage]);
+          // Adjust MIME type based on msg.format content
+          const mimeType = msg.format.includes('jpeg') ? 'image/jpeg' : msg.format;
+          const imageUrl = `data:${mimeType};base64,${msg.data}`;
+      
+          setImageDataRear(imageUrl);
+          setImageRearMessages(prevMessages => [...prevMessages, labeledMessage]);
+        };
+      
+        realsense_listener_rear_srv.subscribe(handleNewImageMessage);
+      
+        return () => {
+          realsense_listener_rear_srv.unsubscribe(handleNewImageMessage);
+        };
       };
-    
-      realsense_listener_rear_srv.subscribe(handleNewImageMessage);
-    
-      return () => {
-        realsense_listener_rear_srv.unsubscribe(handleNewImageMessage);
-      };
+
+      setupListener();
     }, []);
 
     const showContent = (tabID) => {
       setActiveTab(tabID);
+    };
+
+    const toggleFullscreen = () => {
+      setisFullscreen(!isFullscreen);
     };
   
     return (
@@ -152,14 +167,16 @@ const Diagnostics = ({showPage}) => {
             <div id="rollerbrush" className="tab-content" style={{ display: activeTab === 'rollerbrush' ? 'block' : 'none' }}>
               Content for Tab 3
               </div>
-            <div
-              id="camera"
-              className="tab-content"
-              style={{
-                display: activeTab === 'camera' ? 'flex' : 'none',
-                flexDirection: 'column',
-                height: '100%',
-              }}>
+              <div
+                id="camera"
+                className="tab-content"
+                style={{
+                  display: activeTab === 'camera' ? 'flex' : 'none',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
               
               {/* Enlarged view area */}
               <div
@@ -169,7 +186,15 @@ const Diagnostics = ({showPage}) => {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}>
+                  position: isFullscreen ? 'fixed' : 'relative',
+                  top: isFullscreen ? 0 : 'auto',
+                  left: isFullscreen ? 0 : 'auto',
+                  width: isFullscreen ? '100vw' : 'auto',
+                  height: isFullscreen ? '100vh' : 'auto',
+                  zIndex: isFullscreen ? 1000 : 'auto',
+                  backgroundColor: isFullscreen ? 'black' : 'transparent',
+                }}
+              >
                 {enlargedImage ? (
                   <img
                     src={enlargedImage}
@@ -179,6 +204,26 @@ const Diagnostics = ({showPage}) => {
                 ) : (
                   <p style={{ color: '#fff' }}>No image data available</p>
                 )}
+                <button
+                  onClick={toggleFullscreen}
+                  style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    right: '10px',
+                    zIndex: 1001,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    border: 'none',
+                    borderRadius: '15%',
+                    padding: '1em',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <img
+                    src={isFullscreen ? minimizeIcon : maximizeIcon}
+                    alt={isFullscreen ? 'Minimize' : 'Maximize'}
+                    style={{ width: '20px', height: '20px' }}
+                  />
+                </button>
               </div>
               
               {/* Thumbnails area */}

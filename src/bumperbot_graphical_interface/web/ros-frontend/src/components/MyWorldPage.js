@@ -26,7 +26,7 @@ const MyWorldPage = ({mapName}) => {
   useEffect(() => {
     const fetchConfigData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/config');
+        const response = await fetch('http://localhost:5050/api/config');
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
